@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en" data-theme="default-dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Prompt Station · Launchpad</title>
+  <meta name="description" content="One home for Prompt Enhancer, LLM Chain Builder, and PromptForge. Launch inline or jump into each app.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root[data-theme="default-dark"] {
+      --bg-primary: #000000;
+      --bg-secondary: #0a0a0a;
+      --bg-tertiary: #111111;
+      --bg-card: #1a1a1a;
+      --bg-hover: #222222;
+      --bg-active: #2a2a2a;
+      --text-primary: #ffffff;
+      --text-secondary: #cccccc;
+      --text-muted: #888888;
+      --text-accent: #f0f0f0;
+      --accent-primary: #ffffff;
+      --accent-secondary: #e0e0e0;
+      --border: #333333;
+      --border-light: #2a2a2a;
+      --shadow: rgba(255, 255, 255, 0.05);
+      --shadow-medium: rgba(255, 255, 255, 0.1);
+      --shadow-heavy: rgba(255, 255, 255, 0.15);
+      --success: #00ff88;
+      --warning: #ffaa00;
+      --danger: #ff4444;
+      --info: #00aaff;
+      --gradient-primary: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+      --gradient-card: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
+    }
+    :root[data-theme="default-light"] {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --bg-tertiary: #e0e0e0;
+      --bg-card: #f5f5f5;
+      --bg-hover: #d0d0d0;
+      --bg-active: #c0c0c0;
+      --text-primary: #000000;
+      --text-secondary: #333333;
+      --text-muted: #666666;
+      --text-accent: #111111;
+      --accent-primary: #000000;
+      --accent-secondary: #1a1a1a;
+      --border: #cccccc;
+      --border-light: #d0d0d0;
+      --shadow: rgba(0, 0, 0, 0.05);
+      --shadow-medium: rgba(0, 0, 0, 0.1);
+      --shadow-heavy: rgba(0, 0, 0, 0.15);
+      --success: #008000;
+      --warning: #cc9900;
+      --danger: #cc0000;
+      --info: #006666;
+      --gradient-primary: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+      --gradient-card: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+    }
+    :root {
+      --radius: 20px;
+      --radius-lg: 24px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text-primary);
+      background: radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.08), transparent 32%),
+                  radial-gradient(circle at 76% 20%, rgba(255, 255, 255, 0.06), transparent 30%),
+                  var(--gradient-primary);
+      font-family: "Space Grotesk", "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      letter-spacing: 0.01em;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(18px);
+      background: linear-gradient(120deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.52));
+      border-bottom: 1px solid var(--border);
+    }
+  .shell {
+      width: min(1200px, 94vw);
+      margin: 0 auto;
+      padding: 20px 0 64px;
+    }
+    .bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .brand .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.1);
+    }
+    .pill-nav {
+      display: inline-flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .pill:hover { border-color: var(--border-light); transform: translateY(-1px); }
+    main { margin-top: 12px; display: grid; gap: 36px; }
+    .hero {
+      display: grid;
+      gap: 18px;
+      padding: 26px;
+      border-radius: calc(var(--radius) + 6px);
+      background: var(--gradient-card);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.12), transparent 30%),
+                  radial-gradient(circle at 75% 60%, rgba(255, 255, 255, 0.08), transparent 32%);
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.06);
+      width: fit-content;
+      border-radius: 999px;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(32px, 4vw, 44px);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+    p.lead {
+      margin: 0;
+      max-width: 720px;
+      color: var(--text-secondary);
+      font-size: 17px;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      border-radius: 14px;
+      padding: 14px 18px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+      color: #050505;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      box-shadow: 0 12px 30px var(--shadow-medium);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn.secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      box-shadow: none;
+    }
+    .btn:hover { transform: translateY(-2px); filter: brightness(1.03); }
+    section .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    h2 { margin: 0; letter-spacing: -0.01em; color: var(--text-primary); }
+    .sub { color: var(--text-muted); margin: 4px 0 0; }
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+    }
+    .card {
+      background: var(--gradient-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      min-height: 220px;
+    }
+    .card:hover { transform: translateY(-3px); border-color: var(--border-light); box-shadow: 0 20px 50px var(--shadow); }
+    .card.active { border-color: var(--accent-secondary); box-shadow: 0 0 0 1px var(--accent-secondary); }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -60% auto auto -40%;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 60%);
+      filter: blur(18px);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .card.active::before, .card:hover::before { opacity: 1; }
+    .card header { position: relative; z-index: 1; display: grid; gap: 6px; margin-bottom: 12px; background: none; border: none; padding: 0; }
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+    ul.meta {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 12px;
+      display: grid;
+      gap: 6px;
+      color: var(--text-muted);
+      position: relative;
+      z-index: 1;
+    }
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 0 0 10px;
+      z-index: 1;
+      position: relative;
+    }
+    .chip {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .card .actions {
+      margin-top: auto;
+      z-index: 1;
+      position: relative;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .ghost-link, .ghost-btn {
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.05);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .ghost-btn:hover, .ghost-link:hover { transform: translateY(-1px); border-color: rgba(255, 255, 255, 0.18); }
+    .ghost-btn.active { border-color: rgba(124, 240, 255, 0.5); }
+    .workspace {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 6px);
+      padding: 18px;
+      box-shadow: 0 30px 80px var(--shadow);
+      position: relative;
+    }
+    .workspace header {
+      position: relative;
+      z-index: 1;
+      padding: 0 0 12px;
+      border: none;
+      backdrop-filter: none;
+      background: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .workspace .label {
+      color: var(--text-muted);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .frame-shell {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--bg-secondary);
+      min-height: 500px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+    }
+    iframe {
+      width: 100%;
+      height: 580px;
+      border: none;
+      background: var(--bg-secondary);
+    }
+    .frame-info {
+      position: absolute;
+      inset: 16px;
+      display: grid;
+      place-items: center;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .workspace .actions {
+      margin: 0;
+    }
+    .note {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    @media (max-width: 720px) {
+      .hero { padding: 22px; }
+      .bar { flex-wrap: wrap; }
+      .btn, .ghost-btn, .ghost-link { width: 100%; justify-content: center; }
+      iframe { height: 460px; }
+      .frame-shell { min-height: 420px; }
+      .app-grid { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="shell">
+      <div class="bar">
+        <div class="brand"><span class="dot" aria-hidden="true"></span>Prompt Station</div>
+        <nav class="pill-nav" aria-label="Page">
+          <a class="pill" href="#apps">Suite</a>
+          <a class="pill" href="#workspace">Inline workspace</a>
+          <a class="pill" href="#notes">Notes</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <div class="shell">
+    <main>
+      <section class="hero">
+        <span class="eyebrow">Three apps · One control room</span>
+        <h1>Launch and manage your prompt tools from a single place.</h1>
+        <p class="lead">Prompt Station bundles Prompt Enhancer, LLM Chain Builder, and PromptForge behind a clean landing page. Jump straight into a tool or load it inline without leaving this dashboard.</p>
+        <div class="actions">
+          <a class="btn" href="#apps">Pick a tool</a>
+          <a class="btn secondary" href="#workspace">Open inline workspace</a>
+        </div>
+      </section>
+
+      <section id="apps">
+        <div class="header-row">
+          <div>
+            <span class="eyebrow">Suite menu</span>
+            <h2>Choose a tool to launch</h2>
+            <p class="sub">Open directly or stream it inside the workspace pane.</p>
+          </div>
+        </div>
+        <div class="app-grid" role="list">
+          <article class="card" data-card="enhancer" role="listitem">
+            <header>
+              <div class="title">Prompt Enhancer</div>
+              <span class="badge">OpenRouter · streaming</span>
+            </header>
+            <ul class="meta">
+              <li>Instant SSE outputs plus history, presets, and safety-focused CSP.</li>
+              <li>Proxy-friendly for hiding the API key; 100% vanilla HTML/CSS/JS.</li>
+            </ul>
+            <div class="pill-row">
+              <span class="chip">Model picker</span>
+              <span class="chip">Prompt insights</span>
+              <span class="chip">Backup/restore</span>
+            </div>
+            <div class="actions">
+              <button class="ghost-btn" data-inline-target="enhancer" type="button">Open inline</button>
+              <a class="ghost-link" href="./prompt-enhancer/" target="_blank" rel="noopener">Full tab</a>
+            </div>
+          </article>
+
+          <article class="card" data-card="chain" role="listitem">
+            <header>
+              <div class="title">LLM Chain Builder</div>
+              <span class="badge">Multi-stage orchestration</span>
+            </header>
+            <ul class="meta">
+              <li>Chain prompts into stages that can consume prior outputs.</li>
+              <li>Streamed responses, copy controls, and installable PWA.</li>
+            </ul>
+            <div class="pill-row">
+              <span class="chip">Stage linking</span>
+              <span class="chip">Stop control</span>
+              <span class="chip">Offline-ready</span>
+            </div>
+            <div class="actions">
+              <button class="ghost-btn" data-inline-target="chain" type="button">Open inline</button>
+              <a class="ghost-link" href="./llm-open-chain/" target="_blank" rel="noopener">Full tab</a>
+            </div>
+          </article>
+
+          <article class="card" data-card="forge" role="listitem">
+            <header>
+              <div class="title">PromptForge</div>
+              <span class="badge">Prompt library</span>
+            </header>
+            <ul class="meta">
+              <li>Create, tag, import, and export reusable prompts.</li>
+              <li>Lightweight PWA with offline cache and JSON round trips.</li>
+            </ul>
+            <div class="pill-row">
+              <span class="chip">Tagging</span>
+              <span class="chip">Import/Export</span>
+              <span class="chip">Offline</span>
+            </div>
+            <div class="actions">
+              <button class="ghost-btn" data-inline-target="forge" type="button">Open inline</button>
+              <a class="ghost-link" href="./prompt-forge/" target="_blank" rel="noopener">Full tab</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="workspace">
+        <div class="workspace">
+          <header>
+            <div>
+              <div class="label">Inline workspace</div>
+              <div class="title" id="inline-title">Pick a tool to load inside the frame.</div>
+            </div>
+            <div class="actions">
+              <a class="ghost-link" id="open-in-tab" href="./prompt-enhancer/" target="_blank" rel="noopener">Open current in tab</a>
+            </div>
+          </header>
+          <div class="frame-shell">
+            <iframe id="inline-frame" title="Inline app view" src=""></iframe>
+            <div class="frame-info" id="frame-placeholder">Nothing loaded yet. Choose “Open inline” above.</div>
+          </div>
+          <p class="note">The workspace loads the actual app files from this repository, so everything (including PWAs and service workers) behaves the same as in a dedicated tab.</p>
+        </div>
+      </section>
+
+      <section id="notes">
+        <div class="header-row">
+          <div>
+            <span class="eyebrow">Notes</span>
+            <h2>How this landing page ties the suite together</h2>
+            <p class="sub">Each card links to the original app while the workspace iframe keeps them in one place.</p>
+          </div>
+        </div>
+        <ul class="meta">
+          <li>All app routes are unchanged (`/prompt-enhancer/`, `/llm-open-chain/`, `/prompt-forge/`).</li>
+          <li>Inline view points at those same routes, ensuring service workers, manifests, and caching continue to work.</li>
+          <li>Use the “Open current in tab” link to pop the inline session into its own window.</li>
+          <li>This page is static; no build tooling required—open `index.html` from the repo root.</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const apps = {
+      enhancer: {
+        name: "Prompt Enhancer",
+        url: "./prompt-enhancer/",
+        label: "Streaming prompt enhancer"
+      },
+      chain: {
+        name: "LLM Chain Builder",
+        url: "./llm-open-chain/",
+        label: "Multi-stage prompt chainer"
+      },
+      forge: {
+        name: "PromptForge",
+        url: "./prompt-forge/",
+        label: "Prompt library manager"
+      }
+    };
+
+    const frame = document.getElementById("inline-frame");
+    const placeholder = document.getElementById("frame-placeholder");
+    const inlineTitle = document.getElementById("inline-title");
+    const openLink = document.getElementById("open-in-tab");
+
+    function selectApp(key) {
+      const app = apps[key];
+      if (!app) return;
+
+      frame.src = app.url;
+      placeholder.style.display = "none";
+      inlineTitle.textContent = app.name;
+      openLink.href = app.url;
+      openLink.textContent = `Open ${app.name} in tab`;
+
+      document.querySelectorAll("[data-inline-target]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.inlineTarget === key);
+      });
+      document.querySelectorAll("[data-card]").forEach(card => {
+        card.classList.toggle("active", card.dataset.card === key);
+      });
+    }
+
+    document.querySelectorAll("[data-inline-target]").forEach(btn => {
+      btn.addEventListener("click", () => selectApp(btn.dataset.inlineTarget));
+    });
+
+    // Default to the enhancer so the workspace is immediately useful.
+    selectApp("enhancer");
+  </script>
+</body>
+</html>

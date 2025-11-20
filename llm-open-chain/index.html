@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Maniac LLM Chain Processor</title>
+  <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/assets/icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-connectivity="online">
+  <div class="app-shell">
+    <header class="hero" aria-label="Application overview">
+      <div class="hero__content">
+        <p class="eyebrow">Offline-first PWA</p>
+        <h1>Code Maniac LLM Chain Processor</h1>
+        <p class="subtitle">Orchestrate multi-stage prompts with OpenRouter, keep progress offline, and re-use chain templates.</p>
+        <div class="hero__badges">
+          <span class="pill pill--accent">Stale-While-Revalidate</span>
+          <span class="pill">Local-first state</span>
+          <span class="pill">Streaming ready</span>
+        </div>
+      </div>
+      <div class="hero__actions">
+        <button id="theme-toggle" class="ghost-btn" aria-label="Toggle color theme" aria-pressed="false">🌗 Theme</button>
+        <div id="network-pill" class="pill pill--status" role="status" aria-live="polite">Online</div>
+      </div>
+    </header>
+
+    <main class="layout" aria-live="polite">
+      <section id="config-panel" class="card" aria-labelledby="config-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Session Control</p>
+            <h2 id="config-title">Configuration</h2>
+          </div>
+          <p class="hint">Everything in this panel persists locally for offline use.</p>
+        </div>
+        <div class="form-grid">
+          <label class="field" for="api-key-input">
+            <span class="field__label">OpenRouter API Key</span>
+            <input type="password" id="api-key-input" name="api-key" placeholder="sk-or-v1-..." autocomplete="off" inputmode="text" aria-describedby="api-key-status" />
+            <small id="api-key-status" class="field__hint" role="status" aria-live="polite"></small>
+          </label>
+          <label class="field" for="model-select">
+            <span class="field__label">Model</span>
+            <select id="model-select" name="model">
+              <option value="deepseek/deepseek-r1-0528">DeepSeek R1 0528 (Free)</option>
+              <option value="meta-llama/llama-3.1-8b-instruct">Llama 3.1 8B Instruct (Free/Low)</option>
+              <option value="mistralai/mistral-nemo">Mistral Nemo (Low Cost)</option>
+              <option value="google/gemma-7b-it">Gemma 7B IT (Low Cost)</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-grid form-grid--templates">
+          <label class="field" for="template-select">
+            <span class="field__label">Template Library</span>
+            <select id="template-select" name="template">
+              <option value="blank">Blank chain</option>
+              <option value="spec">Product spec → Outline → Tasks</option>
+              <option value="debug">Bug report → Root cause → Fix plan</option>
+              <option value="content">Idea → Headline → Social copy</option>
+            </select>
+            <small class="field__hint">Prefill staged prompts in one click.</small>
+          </label>
+          <label class="field" for="session-title">
+            <span class="field__label">Session Label</span>
+            <input id="session-title" type="text" placeholder="Optional note for this chain" />
+          </label>
+        </div>
+        <div class="action-row">
+          <button id="apply-template-btn" class="primary-btn">Apply Template</button>
+          <button id="export-session-btn" class="ghost-btn">Export Session</button>
+          <button id="clear-session-btn" class="ghost-btn danger">Reset</button>
+        </div>
+      </section>
+
+      <section id="stages" aria-labelledby="stages-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Chain Builder</p>
+            <h2 id="stages-heading">Stages</h2>
+          </div>
+          <p class="hint">Each stage inherits the previous output automatically.</p>
+        </div>
+        <div id="stages-wrapper" class="stage-list" role="list"></div>
+        <button id="add-stage-btn" class="primary-btn full-width">+ Add Next Stage</button>
+      </section>
+    </main>
+  </div>
+
+  <div id="offline-indicator" class="offline" role="status" aria-live="assertive">
+    You are offline. Edits are stored locally until you reconnect.
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div id="install-banner" class="install-banner" role="dialog" aria-live="polite" aria-label="Install app">
+    <div class="install-banner__row">
+      <div>
+        <strong>Install as App</strong>
+        <div class="hint">Get a faster, fullscreen experience.</div>
+      </div>
+      <div class="install-banner__actions">
+        <button id="install-decline" class="ghost-btn">Not now</button>
+        <button id="install-accept" class="primary-btn">Install</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

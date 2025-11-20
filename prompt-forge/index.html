@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="default-dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <!-- Theme and PWA -->
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="PromptForge">
+    <meta name="apple-mobile-web-app-title" content="PromptForge">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="AI Prompt Management System">
+    <meta name="msapplication-TileColor" content="#111827">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <title>PromptForge</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Install Modal Styles */
+        .install-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+        }
+
+        .install-modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 400px;
+            text-align: center;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .install-modal-content h3 {
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+        }
+
+        .install-modal-content p {
+            margin-bottom: 24px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .install-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="header-title">
+                <i class="fas fa-hammer header-icon"></i>
+                <h1>PromptForge</h1>
+            </div>
+            <div class="header-actions">
+                <button class="header-btn" id="import-prompts-btn" title="Import Prompts">
+                    <i class="fas fa-file-import"></i>
+                </button>
+                <button class="header-btn" id="export-prompts-btn" title="Export Prompts">
+                    <i class="fas fa-file-export"></i>
+                </button>
+                <button class="header-btn" id="theme-toggle-btn" title="Toggle Theme">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <button class="header-btn" id="settings-btn" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <input type="file" id="import-prompts-input" accept="application/json" style="display:none">
+            </div>
+        </div>
+    </header>
+
+    <!-- AI Settings Modal -->
+    <div id="ai-settings-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">AI Enhancement Settings</h2>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="ai-settings-form">
+                    <div class="form-group">
+                        <label for="openrouter-api-key">OpenRouter API Key</label>
+                        <input type="password" id="openrouter-api-key" placeholder="sk-or-..." required>
+                        <small style="color: var(--text-muted); display: block; margin-top: 4px;">
+                            Get your free API key from <a href="https://openrouter.ai" target="_blank" style="color: var(--accent-primary);">openrouter.ai</a>
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label for="ai-model-select">AI Model</label>
+                        <select id="ai-model-select" class="form-select" required>
+                            <option value="">Select a model</option>
+                        </select>
+                        <div id="model-loading-spinner" style="display: none; margin-top: 8px; color: var(--text-muted);">
+                            <i class="fas fa-spinner fa-spin"></i> Loading models...
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="enhancement-prompt">Enhancement Prompt</label>
+                        <textarea id="enhancement-prompt" rows="5" placeholder="Enter system prompt for enhancement..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" id="save-ai-settings" class="action-btn primary">Save Settings</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-container">
+        <section class="new-prompt-section">
+            <button class="new-prompt-btn" id="new-prompt-btn">
+                <i class="fas fa-plus"></i>
+                New Prompt
+            </button>
+        </section>
+
+        <section class="controls-section">
+            <div class="search-container">
+                <input type="text" id="search-input" class="search-input" placeholder="Search prompts...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <div class="filters-container">
+                <div class="filter-tags"></div>
+                <div class="sort-container">
+                    <label for="sort-select" class="sort-label">Sort by:</label>
+                    <select id="sort-select" class="sort-select">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="alphabetical">Alphabetical</option>
+                        <option value="most-used">Most Used</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="prompts-grid" id="prompts-grid">
+        </section>
+        
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <i class="fas fa-box-open empty-icon"></i>
+            <h2 class="empty-title">No Prompts Found</h2>
+            <p class="empty-text">It looks like there are no prompts matching your criteria. Try adjusting your search or filters.</p>
+        </div>
+    </main>
+    
+    <!-- Prompt Detail Modal -->
+    <div id="prompt-detail-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="prompt-detail-title" class="modal-title">Prompt Details</h2>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-prompt-content" id="modal-prompt-content"></div>
+                <div class="modal-prompt-tags" id="modal-prompt-tags"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-use-prompt-btn" class="action-btn primary"><i class="fas fa-copy"></i> Copy Prompt</button>
+                <button id="modal-edit-prompt-btn" class="action-btn secondary"><i class="fas fa-edit"></i> Edit</button>
+                <button id="modal-delete-prompt-btn" class="action-btn danger"><i class="fas fa-trash-alt"></i> Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New/Edit Prompt Modal -->
+    <div id="new-edit-prompt-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="new-edit-modal-title" class="modal-title">New Prompt</h2>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="prompt-form">
+                    <div class="form-group">
+                        <label for="prompt-title">Title</label>
+                        <input type="text" id="prompt-title" placeholder="e.g., Creative Writing Assistant" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prompt-content">Prompt Content</label>
+                        <textarea id="prompt-content" placeholder="e.g., You are a creative writing assistant..." rows="10" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="prompt-tags">Tags (comma-separated)</label>
+                        <input type="text" id="prompt-tags" placeholder="e.g., writing, creative, story">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="enhance-prompt-btn" class="action-btn" style="margin-right: auto;">
+                            <i class="fas fa-magic"></i> Enhance with AI
+                        </button>
+                        <button type="submit" id="save-prompt-btn" class="action-btn primary"><i class="fas fa-save"></i> Save Prompt</button>
+                        <button type="button" id="cancel-prompt-btn" class="action-btn secondary"><i class="fas fa-times"></i> Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notification-container" class="notification-container"></div>
+
+    <script src="script.js"></script>
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(reg => console.log('Service worker registered:', reg))
+        .catch(err => console.error('Service worker error:', err));
+    });
+  }
+</script>
+</body>
+</html>
